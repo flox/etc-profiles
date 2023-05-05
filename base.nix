@@ -38,7 +38,7 @@ in ( derivation {
         packages.nixpkgs-flox.pkg-config = {};
         # Provides `<env>/etc/profile' base.
         packages."github:flox/etc-profiles".profile-base = {};
-        # Adds `0100_common.sh' "standard" profile to `<env>/etc/profile.d/'.
+        # Adds `0100_common-paths.sh' to `<env>/etc/profile.d/'.
         packages."github:flox/etc-profiles".profile-common-paths = {};
 
         shell.hook = '${""}'
