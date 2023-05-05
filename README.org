@@ -1,0 +1,42 @@
+#+TITLE: etc-profiles
+
+Installable ~/etc/profile.d~ activation scripts for use with =flox=
+
+Users can define and install additional scripts in ~<env>/etc/profile.d~ as
+"custom packages"/installables to share common setup processes
+across environments.
+
+Recommended usage:
+#+BEGIN_SRC nix
+# flox.nix
+{
+  packages.nixpkgs-flox.sqlite = {
+    meta.outputsToInstall = ["bin" "out" "dev"];
+  };
+  packages.nixpkgs-flox.pkg-config = {};
+  # Provides `<env>/etc/profile' base.
+  packages."github:flox/etc-profiles".profile-base = {};
+  # Adds `0100_common.sh' "standard" profile to `<env>/etc/profile.d/'.
+  packages."github:flox/etc-profiles".profile-common-paths = {};
+
+  shell.hook = ''
+    [[ -r "$FLOX_ENV/etc/profile" ]] && . "$FLOX_ENV/etc/profile";
+    pkg-config --list-all >&2;
+  '';
+}
+#+END_SRC
+
+
+* Available Profile Scripts
+- [[file:./profile][profile-base]] is a simple script that will source child
+  scripts located in ~<env>/etc/profile.d/*.sh~.
+  + This script is required to run any scripts mentioned later
+- [[file:./profile.d/0100_common-paths.sh][profile-common-paths]] sets a small
+  set of the most commonly used UNIX ~*PATH~ variables.
+  + This script is recommended as a member for all =profile.d= collections.
+- [[file:./profile.d/0500_python3.sh][profile-python3]] sets =PYTHONPATH=.
+  + Only runs if =python3= is in =PATH=, so it is a sane member of a robust
+    =profile.d= collection.
+- [[file:./profile.d/0500_node.sh][profile-node]] sets =NODE_PATH=.
+  + Only runs if =node= is in =PATH=, so it is a sane member of a robust
+    =profile.d= collection.
