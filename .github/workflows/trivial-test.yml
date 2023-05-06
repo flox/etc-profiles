@@ -1,0 +1,67 @@
+name: Trivial Test
+
+on:
+  pull_request:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install flox
+      uses: flox/install-flox-action@v1.0.0
+
+    - name: Make Injector
+      run: |
+        set -eu;
+        set -o pipefail;
+        mkdir ./bin;
+        echo '#! /usr/bin/env bash
+        cat "$PWD/flox.nix";' > ./bin/flox-inject;
+        chmod +x ./bin/flox-inject;
+
+    - name: SQLite3 pkg-config Test
+      run: |
+        set -eu;
+        set -o pipefail;
+        _ec=0;
+        trap '_ec="$?"; echo "ERROR: code $_ec" >&2; exit "$_ec";' HUP TERM INT;
+        flox create -e sqlite-dev;
+        trap '
+        _ec="$?";
+        echo "ERROR: code $_ec" >&2;
+        flox destroy -e sqlite-dev;
+        exit "$_ec";
+        ' HUP TERM INT;
+        trap '_ec="$?"; flox destroy -e sqlite-dev; exit "$_ec";' EXIT;
+        cat <<'EOF' > ./flox.nix
+        {
+          packages.nixpkgs-flox.sqlite = {
+            meta.outputsToInstall = ["bin" "out" "dev"];
+          };
+          shell.hook = ''
+            [[ -r "$FLOX_ENV/etc/profile" ]] && . "$FLOX_ENV/etc/profile";
+          '';
+        }
+        EOF
+        EDITOR="$PWD/bin/flox-inject flox edit -e sqlite-dev;
+        rm -f ./flox.nix;
+        flox install -e sqlite-dev pkg-config;
+        flox install -e sqlite-dev '.#profile-base';
+        flox install -e sqlite-dev '.#profile-common-paths';
+        . <( flox activate -e sqlite-dev; );
+        if pkg-config --list-all|grep '^sqlite3 SQLite - SQL database engine$';
+        then
+          echo "PASS" >&2;
+          exit 0;
+        else
+          echo "FAIL" >&2;
+          exit 0;
+        fi
