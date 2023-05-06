@@ -4,12 +4,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - **
+      - '**'
       - '!**/README*'
   push:
     branches: [main]
     paths:
-      - **
+      - '**'
       - '!**/README*'
 
 concurrency:
