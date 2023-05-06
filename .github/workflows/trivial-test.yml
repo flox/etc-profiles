@@ -87,7 +87,7 @@ jobs:
         flox install -e sqlite-dev "$selfURI#profile-common-paths";
 
         echo "Activating env" >&2;
-        . <( PS1='$' PS2= flox activate -e sqlite-dev; );
+        . <( PS1='$ ' PS2= flox activate -e sqlite-dev; );
         if pkg-config --list-all|grep '^sqlite3 SQLite - SQL database engine$';
         then
           echo "PASS" >&2;
