@@ -40,7 +40,6 @@ jobs:
             stalled-download-timeout = 90
             timeout = 0
 
-
     - name: Setup Nix Registry
       run: nix registry pin nixpkgs github:NixOS/nixpkgs/22.11
 
