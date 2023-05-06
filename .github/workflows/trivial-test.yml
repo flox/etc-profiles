@@ -76,7 +76,11 @@ jobs:
         echo "Installing deps" >&2;
         flox install -e sqlite-dev pkg-config;
 
-        selfURI="github:${{ github.repository }}/${GITHUB_REF##*/}";
+        if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+          selfURI="github:${{ github.repository }}";
+        else
+          selfURI="github:${{ github.repository }}/${GITHUB_REF##*/}";
+        fi
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
         flox install -e sqlite-dev "$selfURI#profile-base";
