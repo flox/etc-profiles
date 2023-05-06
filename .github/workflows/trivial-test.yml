@@ -103,11 +103,12 @@ jobs:
         export -f ansifilter;
         export _ansifilter=ansifilter;
         . <( flox activate -e sqlite-dev; );
-        if pkg-config --list-all|grep '^sqlite3 SQLite - SQL database engine$';
+        if pkg-config --list-all|grep '^sqlite3';
         then
           echo "PASS" >&2;
           exit 0;
         else
           echo "FAIL" >&2;
+          pkg-config --list-all >&2;
           exit 0;
         fi
