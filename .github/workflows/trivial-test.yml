@@ -67,6 +67,10 @@ jobs:
         }
         EOF
 
+        echo "flox.nix contents:" >&2;
+        cat ./flox.nix >&2;
+        echo "---" >&2;
+
         echo "Inject flox.nix" >&2;
         EDITOR="$PWD/bin/flox-inject flox edit -e sqlite-dev;
         rm -f ./flox.nix;
