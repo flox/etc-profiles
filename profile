@@ -29,7 +29,14 @@ export FLOX_ENV;
 
 if [ -d "$FLOX_ENV/etc/profile.d" ]; then
   declare -a _prof_scripts;
-  _prof_scripts=( $( set -o nullglob; echo "$FLOX_ENV/etc/profile.d"/*.sh; ) );
+  _prof_scripts=( $(
+    if [ "${SHELL##*/:-}" = zsh ]; then
+      set -o nullglob;
+    else
+      shopt -s nullglob;
+    fi
+    echo "$FLOX_ENV/etc/profile.d"/*.sh;
+  ) );
   for p in "${_prof_scripts[@]}"; do . "$p"; done
   unset _prof_scripts;
 fi
