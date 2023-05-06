@@ -33,7 +33,7 @@ jobs:
         set -o pipefail;
         mkdir ./bin;
         echo '#! /usr/bin/env bash
-        cat "$PWD/flox.nix";' > ./bin/flox-inject;
+        cat "$PWD/flox.nix" > "$1";' > ./bin/flox-inject;
         chmod +x ./bin/flox-inject;
 
     - name: SQLite3 pkg-config Test
