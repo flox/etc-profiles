@@ -78,8 +78,8 @@ jobs:
         selfURI="github:${{ github.repository }}/${{ github.ref }}";
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
-        flox install -e sqlite-dev  "$selfURI#profile-base";
-        flox install -e sqlite-dev '$selfURI#profile-common-paths';
+        flox install -e sqlite-dev "$selfURI#profile-base";
+        flox install -e sqlite-dev "$selfURI#profile-common-paths";
 
         echo "Activating env" >&2;
         . <( flox activate -e sqlite-dev; );
