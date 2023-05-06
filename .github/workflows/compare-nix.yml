@@ -42,7 +42,8 @@ jobs:
       run: |
         set -eu;
         set -o pipefail;
-        nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
+        nix registry add nixpkgs github:NixOS/nixpkgs/22.11;
+        nix registry pin nixpkgs;
 
     - name: SQLite3 pkg-config Test
       shell: bash
