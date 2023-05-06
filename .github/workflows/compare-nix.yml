@@ -16,32 +16,33 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  tests:
+  nix-tests:
     runs-on: ubuntu-latest
-    env:
-      SSH_AUTH_SOCK: /tmp/ssh_agent.sock
     steps:
-      - name: Install Nix
-        uses: cachix/install-nix-action@11f4ad19be46fd34c005a2864996d8f197fb51c6
-        with:
-          install_url: https://releases.nixos.org/nix/nix-2.13.3/install
-          nix_path: nixpkgs=channel:nixpkgs-22.05
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-            substituters = https://cache.nixos.org
-            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-            max-jobs = auto
-            cores = 0
-            substitute = true
-            builders-use-substitutes = true
-            fallback = true
-            connect-timeout = 5
-            stalled-download-timeout = 90
-            timeout = 0
+    - name: Install Nix
+      uses: cachix/install-nix-action@11f4ad19be46fd34c005a2864996d8f197fb51c6
+      with:
+        install_url: https://releases.nixos.org/nix/nix-2.13.3/install
+        nix_path: nixpkgs=channel:nixpkgs-22.11
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          substituters = https://cache.nixos.org
+          trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+          max-jobs = auto
+          cores = 0
+          substitute = true
+          builders-use-substitutes = true
+          fallback = true
+          connect-timeout = 5
+          stalled-download-timeout = 90
+          timeout = 0
 
     - name: Setup Nix Registry
-      run: nix registry pin nixpkgs github:NixOS/nixpkgs/22.11
+      run: |
+        set -eu;
+        set -o pipefail;
+        nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
 
     - name: SQLite3 pkg-config Test
       shell: bash

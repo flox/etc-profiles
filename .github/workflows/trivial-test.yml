@@ -19,13 +19,14 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-
     - name: Install flox
       uses: flox/install-flox-action@v1.0.0
 
     - name: Setup Nix Registry
       shell: bash
       run: |
+        set -eu;
+        set -o pipefail;
         nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
         flox nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
 
