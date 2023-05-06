@@ -97,7 +97,7 @@ jobs:
         export PS1='\s-\v$ ';
         export PS2='> ';
         export PS3='>';
-        epxort PS4='+';
+        export PS4='+';
         . <( flox activate -e sqlite-dev; );
         if pkg-config --list-all|grep '^sqlite3 SQLite - SQL database engine$';
         then
