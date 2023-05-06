@@ -27,10 +27,8 @@ jobs:
       run: |
         set -eu;
         set -o pipefail;
-        nix registry add nixpkgs github:NixOS/nixpkgs/22.11;
-        nix registry pin nixpkgs;
-        flox nix registry add nixpkgs github:NixOS/nixpkgs/22.11;
-        flox nix registry pin nixpkgs;
+        nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
+        flox nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
 
     - name: Make Injector
       shell: bash
@@ -95,7 +93,8 @@ jobs:
         flox install -e sqlite-dev "$selfURI#profile-base";
         flox install -e sqlite-dev "$selfURI#profile-common-paths";
 
-        echo "Activating env" >&2;
+        # Have to work around a bunch of unset variables that get us killed
+        # when `set -eu; set -o pipefail;' is active.
         export PS0=;
         export PS1='\s-\v$ ';
         export PS2='> ';
@@ -105,13 +104,19 @@ jobs:
         ansifilter() { cat -; }
         export -f ansifilter;
         export _ansifilter=ansifilter;
+        echo "Activating env" >&2;
         . <( flox activate -e sqlite-dev; );
+
+        echo "Checking if pkg-config can find sqlite" >&2;
         if pkg-config --list-all|grep '^sqlite3';
         then
           echo "PASS" >&2;
           exit 0;
         else
           echo "FAIL" >&2;
+          echo "pkg-config --list results:" >&2;
+          echo "---" >&2;
           pkg-config --list-all >&2;
+          echo "---" >&2;
           exit 0;
         fi
