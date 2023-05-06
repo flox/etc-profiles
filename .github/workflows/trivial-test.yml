@@ -20,9 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v3
-
     - name: Install flox
       uses: flox/install-flox-action@v1.0.0
 
@@ -77,8 +74,12 @@ jobs:
 
         echo "Installing deps" >&2;
         flox install -e sqlite-dev pkg-config;
-        flox install -e sqlite-dev '.#profile-base';
-        flox install -e sqlite-dev '.#profile-common-paths';
+
+        selfURI="github:${{ github.repository }}/${{ github.ref }}";
+        echo "selfURI: $selfURI" >&2;
+        echo "Installing locally defined deps" >&2;
+        flox install -e sqlite-dev  "$selfURI#profile-base";
+        flox install -e sqlite-dev '$selfURI#profile-common-paths';
 
         echo "Activating env" >&2;
         . <( flox activate -e sqlite-dev; );
