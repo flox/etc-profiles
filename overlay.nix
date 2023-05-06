@@ -22,7 +22,7 @@ final: prev: let
 # ---------------------------------------------------------------------------- #
 
   mkEtcProfile = import ./mk-profile.nix {
-    inherit (prev) bash coreutils system;
+    inherit (final) bash coreutils system;
   };
 
   mkProfileLocal = {
