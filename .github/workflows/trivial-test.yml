@@ -72,7 +72,7 @@ jobs:
         echo "---" >&2;
 
         echo "Inject flox.nix" >&2;
-        EDITOR="$PWD/bin/flox-inject flox edit -e sqlite-dev;
+        EDITOR="$PWD/bin/flox-inject" flox edit -e sqlite-dev;
         rm -f ./flox.nix;
 
         echo "Installing deps" >&2;
