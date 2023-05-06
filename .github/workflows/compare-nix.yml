@@ -1,0 +1,80 @@
+name: Compared to Nix
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**'
+      - '!**/README*'
+  push:
+    branches: [main]
+    paths:
+      - '**'
+      - '!**/README*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+    steps:
+      - name: Install Nix
+        uses: cachix/install-nix-action@11f4ad19be46fd34c005a2864996d8f197fb51c6
+        with:
+          install_url: https://releases.nixos.org/nix/nix-2.13.3/install
+          nix_path: nixpkgs=channel:nixpkgs-22.05
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            substituters = https://cache.nixos.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+            max-jobs = auto
+            cores = 0
+            substitute = true
+            builders-use-substitutes = true
+            fallback = true
+            connect-timeout = 5
+            stalled-download-timeout = 90
+            timeout = 0
+
+
+    - name: Setup Nix Registry
+      run: nix registry pin nixpkgs github:NixOS/nixpkgs/22.11
+
+    - name: SQLite3 pkg-config Test
+      shell: bash
+      run: |
+        set -eu;
+        set -o pipefail;
+        _ec=0;
+        trap '_ec="$?"; echo "ERROR: code $_ec" >&2; exit "$_ec";' HUP TERM INT;
+
+        if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+          selfURI="github:${{ github.repository }}";
+        else
+          selfURI="github:${{ github.repository }}/${GITHUB_REF##*/}";
+        fi
+        echo "selfURI: $selfURI" >&2;
+
+        nix profile install                 \
+          'nixpkgs#sqlite^bin,out,dev'      \
+          'nixpkgs#pkg-config'              \
+          "$selfURI#profile-base"           \
+          "$selfURI#profile-common-paths"   \
+        ;
+
+        export FLOX_ENV="$HOME/.nix-profile";
+        . "$FLOX_ENV/etc/profile";
+
+        if pkg-config --list-all|grep '^sqlite3';
+        then
+          echo "PASS" >&2;
+          exit 0;
+        else
+          echo "FAIL" >&2;
+          pkg-config --list-all >&2;
+          exit 0;
+        fi
