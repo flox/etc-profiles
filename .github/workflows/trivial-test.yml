@@ -65,6 +65,7 @@ jobs:
         EOF
 
         echo "flox.nix contents:" >&2;
+        echo "---" >&2;
         cat ./flox.nix >&2;
         echo "---" >&2;
 
@@ -75,7 +76,7 @@ jobs:
         echo "Installing deps" >&2;
         flox install -e sqlite-dev pkg-config;
 
-        selfURI="github:${{ github.repository }}/$GITHUB_REF";
+        selfURI="github:${{ github.repository }}/${GITHUB_REF##*/}";
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
         flox install -e sqlite-dev "$selfURI#profile-base";
