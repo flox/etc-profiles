@@ -32,8 +32,8 @@ in
 }: ( derivation {
   inherit system pname version script sname;
   name    = pname + "-" + version;
-  builder = "${bash}/bin/bash";
-  PATH    = "${coreutils}/bin";
+  builder = bash.outPath + "/bin/bash";
+  PATH    = coreutils.outPath + "/bin";
   args    = let
     profile_d = builtins.path { path = ./profile.d; };
   in ["-eu" "-o" "pipefail" "-c" ''

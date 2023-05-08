@@ -11,8 +11,8 @@
 in ( derivation {
   inherit system pname version;
   name    = pname + "-" + version;
-  builder = "${bash}/bin/bash";
-  PATH    = "${coreutils}/bin";
+  builder = bash.outPath + "/bin/bash";
+  PATH    = coreutils.outPath + "/bin";
   args    = ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc";
     cp -- ${./profile} "$out/etc/profile";
