@@ -55,7 +55,7 @@ jobs:
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           selfURI="github:${{ github.repository }}";
         else
-          selfURI="github:${{ github.repository }}/GITHUB_REF";
+          selfURI="github:${{ github.repository }}/$GITHUB_REF";
         fi
         echo "selfURI: $selfURI" >&2;
 
