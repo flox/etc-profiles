@@ -45,7 +45,7 @@ final: prev: let
   profiles = builtins.listToAttrs ( map mkProfileLocal [
     { script = ./profile.d/0100_common-paths.sh; }
     { script = ./profile.d/0500_node.sh; }
-    { script = ./profile.d/0500_python3.sh; }
+    { script = ./profile.d/0500_python3.sh; version = "0.1.1"; }
   ] );
 
 
