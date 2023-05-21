@@ -54,7 +54,7 @@ final: prev: let
 in {
   inherit mkEtcProfile;
   etcProfiles = profiles // {
-    base = import ./base.nix { inherit (prev) bash coreutils system; };
+    base = import ./base.nix { inherit (final) bash coreutils system; };
   };
 }
 
