@@ -92,8 +92,7 @@ jobs:
 
         doInstall() {
           local outPath;
-          echo "nix build \"$selfURI#$1\" -L --debug -vvvvv;" >&2;
-          nix build "$selfURI#$1" -L --debug -vvvvv;
+          nix build "$selfURI#$1";
           outPath="$( readlink -f ./result; )";
           echo "outPath: $outPath" >&2;
           flox install -e sqlite-dev "$outPath";
