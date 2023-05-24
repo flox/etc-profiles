@@ -31,7 +31,6 @@ in
   ]
 }: ( derivation {
   inherit system pname version sname;
-  script  = builtins.path { path = script; };
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
@@ -39,7 +38,7 @@ in
     profile_d = builtins.path { path = ./profile.d; };
   in ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc/profile.d";
-    cp -- "$script" "$out/etc/profile.d/$sname";
+    cp -- "${profile_d}/$sname" "$out/etc/profile.d/$sname";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
