@@ -8,16 +8,15 @@
 { bash, coreutils, system }: let
   pname   = "profile-base";
   version = "0.1.0";
+  script  = builtins.path { path = ./profile; };
 in ( derivation {
   inherit system pname version;
-  #script  = builtins.path { path = ./profile; };
-  script  = ./profile;
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
   args    = ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc";
-    cp -- "$script" "$out/etc/profile";
+    cp -- "${script}" "$out/etc/profile";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );

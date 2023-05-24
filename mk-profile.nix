@@ -29,16 +29,16 @@ in
     "x86_64-linux"  "aarch64-linux"  "i686-linux"
     "x86_64-darwin" "aarch64-darwin"
   ]
-} @ args: ( derivation {
+} @ args: let
+  script = builtins.path { path = args.script; };
+in ( derivation {
   inherit system pname version sname;
-  #script  = builtins.path { path = script; };
-  inherit script;
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
   args    = ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc/profile.d";
-    cp -- "$script" "$out/etc/profile.d/$sname";
+    cp -- "${script}" "$out/etc/profile.d/$sname";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
