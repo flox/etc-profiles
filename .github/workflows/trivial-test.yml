@@ -103,8 +103,6 @@ jobs:
 
         echo "---";
         doInstall profile-base;
-
-        echo "---";
         doInstall profile-common-paths;
         echo "---";
 

@@ -30,7 +30,8 @@ in
     "x86_64-darwin" "aarch64-darwin"
   ]
 } @ args: ( derivation {
-  inherit system pname version sname script;
+  inherit system pname version sname;
+  script  = builtins.path { path = script; };
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
