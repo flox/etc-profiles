@@ -55,9 +55,7 @@ jobs:
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           selfURI="github:${{ github.repository }}";
         else
-          # FIXME: rev parser is broken
-          ##selfURI="github:${{ github.repository }}/${{ github.sha }}";
-          selfURI="$PWD";
+          selfURI="github:${{ github.repository }}/${{ github.sha }}";
         fi
         echo "selfURI: $selfURI" >&2;
 
