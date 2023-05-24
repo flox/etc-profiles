@@ -10,7 +10,7 @@
   version = "0.1.0";
 in ( derivation {
   inherit system pname version;
-  script  = builtins.path { path = ./profile; };
+  script  = ./profile;
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
