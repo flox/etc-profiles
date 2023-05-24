@@ -81,5 +81,5 @@ jobs:
           echo "---" >&2;
           pkg-config --list-all >&2;
           echo "---" >&2;
-          exit 0;
+          exit 1;
         fi
