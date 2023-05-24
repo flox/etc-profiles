@@ -13,9 +13,10 @@ in ( derivation {
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
+  script  = builtins.path { path = ./profile; };
   args    = ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc";
-    cp -- ${builtins.path { path = ./profile; }} "$out/etc/profile";
+    cp -- "$script" "$out/etc/profile";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
