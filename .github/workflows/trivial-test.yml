@@ -90,9 +90,8 @@ jobs:
         fi
         doInstall() {
           local outPath;
-          outPath="$(
-            nix build "$selfURI#$1" --no-link --print-out-paths -L --debug;
-          )";
+          nix build "$selfURI#$1" -L --debug;
+          outPath="$( readlink -f ./result; )";
           echo "outPath: $outPath" >&2;
           flox install -e sqlite-dev "$outPath";
         }
