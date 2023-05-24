@@ -89,8 +89,10 @@ jobs:
           selfURI="github:${{ github.repository }}/${{ github.sha }}";
         fi
         getOutPath() {
-          nix build "$selfURI#$1" --no-link --print-out-paths;
+          local outPath;
+          outPath="$( nix build "$selfURI#$1" --no-link --print-out-paths; )";
           sleep 1s;
+          echo "$outPath";
         }
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
