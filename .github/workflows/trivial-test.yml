@@ -30,10 +30,6 @@ jobs:
         nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
         flox nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
 
-    - uses: actions/checkout@v3
-      with:
-        path: ./project
-
     - name: Make Injector
       shell: bash
       run: |
@@ -90,14 +86,15 @@ jobs:
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           selfURI="github:${{ github.repository }}";
         else
-          # FIXME: rev parser is broken
-          ##selfURI="github:${{ github.repository }}/${{ github.sha }}";
-          selfURI="$PWD/project";
+          selfURI="github:${{ github.repository }}/${{ github.sha }}";
         fi
+        getOutPath() {
+          nix build "$selfURI#$1" --no-link --print-out-paths;
+        }
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
-        flox install -e sqlite-dev "$selfURI#profile-base";
-        flox install -e sqlite-dev "$selfURI#profile-common-paths";
+        flox install -e sqlite-dev "$( getOutPath profile-base; )";
+        flox install -e sqlite-dev "$( getOutPath profile-common-paths; )";
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
