@@ -30,7 +30,7 @@ in
     "x86_64-darwin" "aarch64-darwin"
   ]
 } @ args: let
-  script  = builtins.path { path = args.script; };
+  script = builtins.path { path = args.script; };
 in ( derivation {
   inherit system pname version sname script;
   name    = pname + "-" + version;
