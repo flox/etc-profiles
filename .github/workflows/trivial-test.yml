@@ -31,6 +31,8 @@ jobs:
         flox nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
 
     - uses: actions/checkout@v3
+      with:
+        path: ./project
 
     - name: Make Injector
       shell: bash
@@ -90,7 +92,7 @@ jobs:
         else
           # FIXME: rev parser is broken
           ##selfURI="github:${{ github.repository }}/${{ github.sha }}";
-          selfURI="$PWD";
+          selfURI="$PWD/project";
         fi
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
