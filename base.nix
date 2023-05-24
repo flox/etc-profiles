@@ -15,7 +15,7 @@ in ( derivation {
   PATH    = coreutils.outPath + "/bin";
   args    = ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc";
-    cp -- ${./profile} "$out/etc/profile";
+    cp -- ${builtins.path { path = ./profile; }} "$out/etc/profile";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
