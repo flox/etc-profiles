@@ -93,8 +93,10 @@ jobs:
         }
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
+        set -x
         flox install -e sqlite-dev "$( getOutPath profile-base; )";
         flox install -e sqlite-dev "$( getOutPath profile-common-paths; )";
+        set +x
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
