@@ -8,12 +8,12 @@
 { bash, coreutils, system }: let
   pname   = "profile-base";
   version = "0.1.0";
+  script  = builtins.path { path = ./profile; };
 in ( derivation {
-  inherit system pname version;
+  inherit system pname version script;
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
-  script  = builtins.path { path = ./profile; };
   args    = ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc";
     cp -- "$script" "$out/etc/profile";
