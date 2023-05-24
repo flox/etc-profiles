@@ -90,6 +90,7 @@ jobs:
         fi
         getOutPath() {
           nix build "$selfURI#$1" --no-link --print-out-paths;
+          sleep 1s;
         }
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
