@@ -88,17 +88,25 @@ jobs:
         else
           selfURI="github:${{ github.repository }}/${{ github.sha }}";
         fi
+        echo "selfURI: $selfURI" >&2;
+
         doInstall() {
           local outPath;
-          nix build "$selfURI#$1" -L --debug;
+          echo "nix build \"$selfURI#$1\" -L;" >&2;
+          nix build "$selfURI#$1" -L;
           outPath="$( readlink -f ./result; )";
           echo "outPath: $outPath" >&2;
           flox install -e sqlite-dev "$outPath";
         }
-        echo "selfURI: $selfURI" >&2;
+
         echo "Installing locally defined deps" >&2;
+
+        echo "---";
         doInstall profile-base;
+
+        echo "---";
         doInstall profile-common-paths;
+        echo "---";
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
