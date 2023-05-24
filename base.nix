@@ -8,9 +8,9 @@
 { bash, coreutils, system }: let
   pname   = "profile-base";
   version = "0.1.0";
-  script  = builtins.path { path = ./profile; };
 in ( derivation {
-  inherit system pname version script;
+  inherit system pname version;
+  script  = builtins.path { path = ./profile; };
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
