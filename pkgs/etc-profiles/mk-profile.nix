@@ -17,7 +17,7 @@ let
     m = builtins.match "profile-(.*)" p;
   in if m == null then p else builtins.head m;
 in
-{ bash, coreutils, system }:
+{ base, bash, coreutils, system }:
 { script
 , pname
 , version         ? "0.1.0"
@@ -39,6 +39,8 @@ in
   in ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc/profile.d";
     cp -- "$script" "$out/etc/profile.d/$sname";
+    ln -s "${base}/etc/profile" "$out/etc/profile";
+    ln -s "${base}/etc/profile.d/0100_common-paths.sh" "$out/etc/profile.d";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );

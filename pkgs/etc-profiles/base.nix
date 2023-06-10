@@ -5,17 +5,17 @@
 #
 # ---------------------------------------------------------------------------- #
 
-{ bash, coreutils, system }: let
+{ self, version, bash, coreutils, system }: let
   pname   = "profile-base";
-  version = "0.1.0";
 in ( derivation {
   inherit system pname version;
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
   args    = ["-eu" "-o" "pipefail" "-c" ''
-    mkdir -p "$out/etc";
-    cp -- ${./profile} "$out/etc/profile";
+    mkdir -p "$out/etc/profile.d";
+    cp -- ${self}/profile "$out/etc/profile";
+    cp -- ${self}/profile.d/0100_common-paths.sh "$out/etc/profile.d";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
