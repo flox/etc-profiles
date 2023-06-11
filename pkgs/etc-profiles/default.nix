@@ -48,7 +48,7 @@ let
 in runCommand "etc-profiles.${version}" {
   inherit pname version;
   outputs = [ "out" ] ++ (builtins.attrNames profiles);
-  meta.description = "an example flox package";
+  meta.description = "Installable /etc/profile.d activation scripts for use with flox";
 } ''
   cp -R ${etcProfiles}/. $out
   ${lib.concatStringsSep "\n" (lib.mapAttrsToList (output: outpath:
