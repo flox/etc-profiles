@@ -20,7 +20,6 @@ in
 { base, bash, coreutils, system }:
 { script
 , pname
-, version         ? "0.1.0"
 , priority        ? null                   # Integer 0-9999 or `null'
 , sname           ? ( prioToPrefix priority ) + ( npp pname )
 , description     ? "An `/etc/profile.d/*.sh` script managing ${npp pname}."
@@ -30,8 +29,8 @@ in
     "x86_64-darwin" "aarch64-darwin"
   ]
 }: ( derivation {
-  inherit system pname version script sname;
-  name    = pname + "-" + version;
+  inherit system pname script sname;
+  name    = pname + "-" + base.version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
   args    = let

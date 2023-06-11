@@ -46,6 +46,7 @@ let
   };
 
 in runCommand "etc-profiles.${version}" {
+  inherit pname version;
   outputs = [ "out" ] ++ (builtins.attrNames profiles);
   meta.description = "an example flox package";
 } ''
