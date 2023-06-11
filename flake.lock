@@ -332,11 +332,7 @@
         "flox-floxpkgs": [
           "flox-floxpkgs"
         ],
-        "nixpkgs": [
-          "flox-floxpkgs",
-          "nixpkgs",
-          "nixpkgs-stable"
-        ],
+        "nixpkgs": "nixpkgs_5",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixpkgs-staging": "nixpkgs-staging",
         "nixpkgs-unstable": "nixpkgs-unstable",
@@ -358,6 +354,20 @@
         "owner": "flox",
         "repo": "nixpkgs-flox",
         "type": "github"
+      }
+    },
+    "nixpkgs_5": {
+      "locked": {
+        "lastModified": 1684754342,
+        "narHash": "sha256-plGnjnbnPLoZCTdQX21oT7xliQhFtgcWlkuDHgtEb1o=",
+        "owner": "flox",
+        "repo": "nixpkgs",
+        "rev": "7084250df3d7f9735087d3234407f3c1fc2400e3",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs-stable",
+        "type": "indirect"
       }
     },
     "nixpkgs__flox__aarch64-darwin": {
