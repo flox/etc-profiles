@@ -17,7 +17,7 @@ let
     m = builtins.match "profile-(.*)" p;
   in if m == null then p else builtins.head m;
 in
-{ base, bash, coreutils, system }:
+{ version, bash, coreutils, system }:
 { script
 , pname
 , priority        ? null                   # Integer 0-9999 or `null'
@@ -30,7 +30,7 @@ in
   ]
 }: ( derivation {
   inherit system pname script sname;
-  name    = pname + "-" + base.version;
+  name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
   args    = let
@@ -38,7 +38,6 @@ in
   in ["-eu" "-o" "pipefail" "-c" ''
     mkdir -p "$out/etc/profile.d";
     cp -- "$script" "$out/etc/profile.d/$sname";
-    ln -s "${base}/etc/profile" "$out/etc/profile";
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );

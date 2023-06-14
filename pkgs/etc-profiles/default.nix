@@ -18,7 +18,8 @@ let
   base = import ./base.nix { inherit self version bash coreutils system; };
 
   mkEtcProfile = import ./mk-profile.nix {
-    inherit base bash coreutils system;
+    inherit bash coreutils system;
+    version = base.version;
   };
 
   mkProfileLocal = {

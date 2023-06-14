@@ -42,7 +42,7 @@ in ( derivation {
           # a list of all supported language pack outputs. Please
           # note that all/most language packs depend on including
           # the "common_paths" output.
-          meta.outputsToInstall = [ "common_paths" "python3" ];
+          meta.outputsToInstall = [ "base" "common_paths" "python3" ];
         };
 
         shell.hook = '${""}'
