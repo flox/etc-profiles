@@ -29,13 +29,14 @@ let
   } @ args: let
     ss = splitSname script;
   in {
-    name  = ss.bname;
+    name  = lib.replaceStrings ["-"] ["_"] ss.bname;
     value = lib.makeOverridable mkEtcProfile (
       ( removeAttrs ss ["bname"] ) // args
     );
   };
 
   profiles = builtins.listToAttrs ( map mkProfileLocal [
+    { script = src + "/profile.d/0100_common-paths.sh"; }
     { script = src + "/profile.d/0500_node.sh"; }
     { script = src + "/profile.d/0500_python3.sh"; }
   ] );
@@ -47,10 +48,11 @@ let
 
 in runCommand "etc-profiles.${version}" {
   inherit pname version;
-  outputs = [ "out" ] ++ (builtins.attrNames profiles);
+  outputs = [ "out" "base" ] ++ (builtins.attrNames profiles);
   meta.description = "Installable /etc/profile.d activation scripts for use with flox";
 } ''
-  cp -R ${etcProfiles}/. $out
+  cp -R -- ${etcProfiles}/. $out
+  cp -R -- ${base}/. $base
   ${lib.concatStringsSep "\n" (lib.mapAttrsToList (output: outpath:
-    "cp -R ${outpath}/. \$${output}") profiles)}
+    "cp -R -- ${outpath}/. \$${output}") profiles)}
 ''
