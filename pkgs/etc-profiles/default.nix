@@ -1,9 +1,11 @@
-{ self, lib, buildEnv, runCommand, bash, coreutils, system }:
+{ self, inputs, lib, buildEnv, runCommand, bash, coreutils, system }:
+
 
 let
   pname = "etc-profiles";
   version = "0.1.0-${lib.flox-floxpkgs.getRev self}";
   src = self;
+  ld-floxlib = inputs.ld-floxlib.packages.ld-floxlib;
 
   splitSname = script: let
     sname = baseNameOf script;
@@ -15,7 +17,7 @@ let
     pname    = "profile-" + bname;
   };
 
-  base = import ./base.nix { inherit self version bash coreutils system; };
+  base = import ./base.nix { inherit self version bash coreutils ld-floxlib system; };
 
   mkEtcProfile = import ./mk-profile.nix {
     inherit bash coreutils system;
@@ -50,6 +52,7 @@ let
 in runCommand "etc-profiles.${version}" {
   inherit pname version;
   outputs = [ "out" "base" ] ++ (builtins.attrNames profiles);
+  buildInputs = [ ld-floxlib ];
   meta.description = "Installable /etc/profile.d activation scripts for use with flox";
 } ''
   cp -R -- ${etcProfiles}/. $out

@@ -5,7 +5,7 @@
 #
 # ---------------------------------------------------------------------------- #
 
-{ self, version, bash, coreutils, system }: let
+{ self, version, bash, coreutils, ld-floxlib, system }: let
   pname   = "profile-base";
 in ( derivation {
   inherit system pname version;
@@ -13,8 +13,11 @@ in ( derivation {
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
   args    = ["-eu" "-o" "pipefail" "-c" ''
-    mkdir -p "$out/etc";
+    mkdir -p "$out/etc" "$out/lib";
     cp -- ${self}/profile "$out/etc/profile";
+    for i in ${ld-floxlib}/lib/*; do
+      ln -s "$i" "$out/lib/$(basename $i)";
+    done
   ''];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
