@@ -5,20 +5,21 @@
 #
 # ---------------------------------------------------------------------------- #
 
-{ self, version, bash, coreutils, ld-floxlib, system }: let
+{ self, version, bash, coreutils, hostPlatform, ld-floxlib, lib, system }: let
   pname   = "profile-base";
 in ( derivation {
   inherit system pname version;
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
-  args    = ["-eu" "-o" "pipefail" "-c" ''
+  args    = ["-eu" "-o" "pipefail" "-c" (''
     mkdir -p "$out/etc" "$out/lib";
     cp -- ${self}/profile "$out/etc/profile";
+  '' + lib.optionalString hostPlatform.isLinux ''
     for i in ${ld-floxlib}/lib/*; do
       ln -s "$i" "$out/lib/$(basename $i)";
     done
-  ''];
+  '')];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
 } ) // {
