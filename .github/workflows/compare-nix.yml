@@ -66,7 +66,9 @@ jobs:
           nix log "$selfURI#etc-profiles";
 
         export FLOX_ENV="$HOME/.nix-profile";
+        set +x;
         . "$FLOX_ENV/etc/profile";
+        set -x;
 
         echo "Checking if pkg-config can find sqlite" >&2;
         if pkg-config --list-all|grep '^sqlite3';
