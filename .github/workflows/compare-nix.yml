@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Nix
-      uses: cachix/install-nix-action@v22
+      uses: cachix/install-nix-action@6ed004b9ccb68dbc28e7c85bee15fa93dbd214ac
       with:
         install_url: https://releases.nixos.org/nix/nix-2.15.1/install
         nix_path: nixpkgs=channel:nixpkgs-23.05
@@ -54,7 +54,7 @@ jobs:
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           selfURI="github:$REPO";
         else
-          selfURI="github:$$REPO/$GITHUB_REF";
+          selfURI="github:$REPO/$GITHUB_REF";
         fi
         echo "selfURI: $selfURI" >&2;
 
