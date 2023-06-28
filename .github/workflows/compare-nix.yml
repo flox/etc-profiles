@@ -52,6 +52,9 @@ jobs:
         REPO: ${{ github.repository }}
         FLOX_NOSET_LD_AUDIT: 1
       run: |
+        set -eu;
+        set -o pipefail;
+
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           selfURI="github:$REPO";
         else
@@ -65,10 +68,8 @@ jobs:
         nix profile install "$selfURI#etc-profiles"      -L;
 
         echo "Activating env" >&2;
-        set -x;
         export FLOX_ENV="$HOME/.nix-profile";
         . "$FLOX_ENV/etc/profile";
-        set +x;
 
         echo "Checking if pkg-config can find sqlite" >&2;
         if pkg-config --list-all|grep '^sqlite3';
