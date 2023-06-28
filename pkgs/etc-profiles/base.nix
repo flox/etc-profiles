@@ -5,18 +5,21 @@
 #
 # ---------------------------------------------------------------------------- #
 
-{ bash, coreutils, system }: let
+{ self, version, bash, coreutils, hostPlatform, ld-floxlib, lib, system }: let
   pname   = "profile-base";
-  version = "0.1.0";
 in ( derivation {
   inherit system pname version;
   name    = pname + "-" + version;
   builder = bash.outPath + "/bin/bash";
   PATH    = coreutils.outPath + "/bin";
-  args    = ["-eu" "-o" "pipefail" "-c" ''
-    mkdir -p "$out/etc";
-    cp -- ${./profile} "$out/etc/profile";
-  ''];
+  args    = ["-eu" "-o" "pipefail" "-c" (''
+    mkdir -p "$out/etc" "$out/lib";
+    cp -- ${self}/profile "$out/etc/profile";
+  '' + lib.optionalString hostPlatform.isLinux ''
+    for i in ${ld-floxlib}/lib/*; do
+      ln -s "$i" "$out/lib/$(basename $i)";
+    done
+  '')];
   preferLocalBuild = true;
   allowSubstitutes = system == ( builtins.currentSystem or null );
 } ) // {
@@ -35,11 +38,16 @@ in ( derivation {
         packages.nixpkgs-flox.sqlite = {
           meta.outputsToInstall = ["bin" "out" "dev"];
         };
-        packages.nixpkgs-flox.pkg-config = {};
-        # Provides `<env>/etc/profile' base.
-        packages."github:flox/etc-profiles".profile-base = {};
-        # Adds `0100_common-paths.sh' to `<env>/etc/profile.d/'.
-        packages."github:flox/etc-profiles".profile-common-paths = {};
+
+        # Provides developer environment hooks for use with python3.
+        packages.flox.etc-profiles = {
+          # Optionally, specify language packages to install.
+          # Invoke `flox search -c flox etc-profiles -l` to see
+          # a list of all supported language pack outputs. Please
+          # note that all/most language packs depend on including
+          # the "common_paths" output.
+          meta.outputsToInstall = [ "base" "common_paths" "python3" ];
+        };
 
         shell.hook = '${""}'
           [[ -r "$FLOX_ENV/etc/profile" ]] && . "$FLOX_ENV/etc/profile";
