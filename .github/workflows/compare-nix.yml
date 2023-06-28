@@ -50,6 +50,7 @@ jobs:
       shell: bash
       env:
         REPO: ${{ github.repository }}
+        FLOX_NOSET_LD_AUDIT: 1
       run: |
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           selfURI="github:$REPO";
