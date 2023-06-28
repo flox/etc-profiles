@@ -60,10 +60,11 @@ jobs:
         echo "selfURI: $selfURI" >&2;
 
         echo "Installing deps" >&2;
-        nix profile install                 \
-          'nixpkgs#sqlite^bin,out,dev'      \
-          'nixpkgs#pkg-config'              \
-          "$selfURI#etc-profiles"           \
+        SYSTEM="$( nix eval --raw --impure --expr builtins.currentSystem; )";
+        nix profile install                                      \
+          'nixpkgs#sqlite^bin,out,dev'                           \
+          'nixpkgs#pkg-config'                                   \
+          "$selfURI#etc-profiles#packages.$SYSTEM.etc-profiles"  \
         ;
 
         export FLOX_ENV="$HOME/.nix-profile";
