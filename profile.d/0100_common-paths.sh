@@ -30,6 +30,14 @@ export             \
 
 if [ -z "${FLOX_NOSET_LD_AUDIT:-}" ]; then
   if [ -e "$FLOX_ENV/lib/ld-floxlib.so" ]; then
+
+    PYTHON3="$( command -v python3||type -P python3||which python3; )";
+
+    gdb --command "set environment LD_AUDIT=$FLOX_ENV/lib/ld-floxlib.so"  \
+        --command run                                                     \
+        --command bt                                                      \
+        "$PYTHON3";
+
     LD_AUDIT="$FLOX_ENV/lib/ld-floxlib.so";
     export LD_AUDIT;
   else  # Assume Darwin
