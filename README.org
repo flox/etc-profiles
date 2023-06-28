@@ -15,9 +15,7 @@ Recommended usage:
   };
   packages.nixpkgs-flox.pkg-config = {};
   # Provides `<env>/etc/profile' base.
-  packages."github:flox/etc-profiles".profile-base = {};
-  # Adds `0100_common-paths.sh' to `<env>/etc/profile.d/'.
-  packages."github:flox/etc-profiles".profile-common-paths = {};
+  packages."github:flox/etc-profiles".etc-profiles = {};
 
   shell.hook = ''
     [[ -r "$FLOX_ENV/etc/profile" ]] && . "$FLOX_ENV/etc/profile";
