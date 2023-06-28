@@ -59,12 +59,11 @@ jobs:
         echo "selfURI: $selfURI" >&2;
 
         echo "Installing deps" >&2;
-        nix profile install 'nixpkgs#sqlite^bin,out,dev';
-        nix profile install 'nixpkgs#pkg-config';
+        nix profile install 'nixpkgs#sqlite^bin,out,dev' -L;
+        nix profile install 'nixpkgs#pkg-config'         -L;
+        nix profile install "$selfURI#etc-profiles"      -L;
 
-        nix profile install "$selfURI#etc-profiles" -L --show-trace -vvvvv;
-
-        echo "Activating env" >&;
+        echo "Activating env" >&2;
         set -x;
         export FLOX_ENV="$HOME/.nix-profile";
         . "$FLOX_ENV/etc/profile";
