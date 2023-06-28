@@ -63,7 +63,7 @@ jobs:
         nix profile install                 \
           'nixpkgs#sqlite^bin,out,dev'      \
           'nixpkgs#pkg-config'              \
-          "$selfURI#etcProfiles"            \
+          "$selfURI#etc-profiles"           \
         ;
 
         export FLOX_ENV="$HOME/.nix-profile";
