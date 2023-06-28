@@ -69,7 +69,7 @@ jobs:
 
         echo "Activating env" >&2;
         export FLOX_ENV="$HOME/.nix-profile";
-        export LD_DEBUG=all;
+        export LD_FLOXLIB_DEBUG=1;
         . "$FLOX_ENV/etc/profile";
 
         echo "Checking if pkg-config can find sqlite" >&2;
