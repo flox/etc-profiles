@@ -22,13 +22,8 @@ jobs:
     - name: Install flox
       uses: flox/install-flox-action@v1.0.0
 
-    - name: Setup Nix Registry
-      shell: bash
-      run: |
-        set -eu;
-        set -o pipefail;
-        nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
-        flox nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
+    - name: Checkout
+      uses: actions/checkout@v3
 
     - name: Make Injector
       shell: bash
@@ -83,32 +78,16 @@ jobs:
         echo "Installing deps" >&2;
         flox install -e sqlite-dev pkg-config;
 
-        if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
-          selfURI="github:${{ github.repository }}";
-        else
-          selfURI="github:${{ github.repository }}/$GITHUB_REF";
-        fi
-        echo "selfURI: $selfURI" >&2;
-        echo "Installing locally defined deps" >&2;
-        SYSTEM="$( nix eval --raw --impure --expr builtins.currentSystem; )";
-        flox install -e sqlite-dev "$selfURI#packages.$SYSTEM.etc-profiles";
+        flox install -e sqlite-dev etc-profiles;
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
-        export PS0=;
-        export PS1='\s-\v$ ';
-        export PS2='> ';
-        export PS3='>';
-        export PS4='+';
-        export FLOX_SAVE_PS1=;
-        ansifilter() { cat -; }
-        export -f ansifilter;
-        export _ansifilter=ansifilter;
+        runEnv() { flox activate -e sqlite-dev -- "$@"; }
         echo "Activating env" >&2;
-        . <( flox activate -e sqlite-dev; );
+        runEnv :;
 
         echo "Checking if pkg-config can find sqlite" >&2;
-        if pkg-config --list-all|grep '^sqlite3';
+        if runEnv pkg-config --list-all|grep '^sqlite3';
         then
           echo "PASS" >&2;
           exit 0;
@@ -116,7 +95,7 @@ jobs:
           echo "FAIL" >&2;
           echo "pkg-config --list results:" >&2;
           echo "---" >&2;
-          pkg-config --list-all >&2;
+          runEnv pkg-config --list-all >&2;
           echo "---" >&2;
           exit 1;
         fi

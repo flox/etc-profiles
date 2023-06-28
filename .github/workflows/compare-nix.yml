@@ -22,8 +22,8 @@ jobs:
     - name: Install Nix
       uses: cachix/install-nix-action@11f4ad19be46fd34c005a2864996d8f197fb51c6
       with:
-        install_url: https://releases.nixos.org/nix/nix-2.13.3/install
-        nix_path: nixpkgs=channel:nixpkgs-22.11
+        install_url: https://releases.nixos.org/nix/nix-2.16.1/install
+        nix_path: nixpkgs=channel:nixpkgs-23.05
         extra_nix_config: |
           experimental-features = nix-command flakes
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +42,7 @@ jobs:
       run: |
         set -eu;
         set -o pipefail;
-        nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
+        nix registry pin nixpkgs github:NixOS/nixpkgs/23.05;
 
     - name: SQLite3 pkg-config Test
       shell: bash
@@ -60,12 +60,9 @@ jobs:
         echo "selfURI: $selfURI" >&2;
 
         echo "Installing deps" >&2;
-        SYSTEM="$( nix eval --raw --impure --expr builtins.currentSystem; )";
-        nix profile install                         \
-          'nixpkgs#sqlite^bin,out,dev'              \
-          'nixpkgs#pkg-config'                      \
-          "$selfURI#packages.$SYSTEM.etc-profiles"  \
-        ;
+        nix profile install 'nixpkgs#sqlite^bin,out,dev';
+        nix profile install 'nixpkgs#pkg-config';
+        nix profile install "$selfURI#etc-profiles";
 
         export FLOX_ENV="$HOME/.nix-profile";
         . "$FLOX_ENV/etc/profile";
