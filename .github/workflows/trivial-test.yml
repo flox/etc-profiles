@@ -40,19 +40,9 @@ jobs:
       run: |
         set -eu;
         set -o pipefail;
-        _ec=0;
-        trap '_ec="$?"; echo "ERROR: code $_ec" >&2; exit "$_ec";' HUP TERM INT;
 
         echo "Creating sqlite-dev" >&2;
         flox create -e sqlite-dev;
-
-        trap '
-        _ec="$?";
-        echo "ERROR: code $_ec" >&2;
-        flox destroy -e sqlite-dev;
-        exit "$_ec";
-        ' HUP TERM INT;
-        trap '_ec="$?"; flox destroy -e sqlite-dev; exit "$_ec";' EXIT;
 
         echo "Creating flox.nix" >&2;
         cat <<'EOF' > ./flox.nix
