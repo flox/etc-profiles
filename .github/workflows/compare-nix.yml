@@ -50,7 +50,7 @@ jobs:
       shell: bash
       env:
         REPO: ${{ github.repository }}
-        FLOX_NOSET_LD_AUDIT: 1
+        #FLOX_NOSET_LD_AUDIT: 1
       run: |
         set -eu;
         set -o pipefail;
@@ -69,6 +69,7 @@ jobs:
 
         echo "Activating env" >&2;
         export FLOX_ENV="$HOME/.nix-profile";
+        export LD_DEBUG=all;
         . "$FLOX_ENV/etc/profile";
 
         echo "Checking if pkg-config can find sqlite" >&2;
