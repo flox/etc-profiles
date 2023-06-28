@@ -47,8 +47,6 @@ jobs:
     - name: SQLite3 pkg-config Test
       shell: bash
       run: |
-        set -eu;
-        set -o pipefail;
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           selfURI="github:${{ github.repository }}";
         else
@@ -60,12 +58,10 @@ jobs:
         nix profile install 'nixpkgs#sqlite^bin,out,dev';
         nix profile install 'nixpkgs#pkg-config';
 
-        set -x;
-        nix profile install "$selfURI#etc-profiles" -L --show-trace||  \
-          nix log "$selfURI#etc-profiles";
+        nix profile install "$selfURI#etc-profiles" -L --show-trace -vvvvv;
 
         echo "Activating env" >&;
-
+        set -x;
         export FLOX_ENV="$HOME/.nix-profile";
         . "$FLOX_ENV/etc/profile";
         set +x;

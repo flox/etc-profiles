@@ -19,8 +19,8 @@
     outputs   = ["common_paths" "node" "python3" "out"];
     profile   = builtins.path { path = ( toString self ) + "/profile";   };
     profile_d = builtins.path { path = ( toString self ) + "/profile.d"; };
-    PATH    = coreutils.outPath + "/bin";
-    body    = ''
+    PATH      = coreutils.outPath + "/bin";
+    body      = ''
       mkdir -p "$out/etc"                     \
                "$out/lib"                     \
                "$common_paths/etc/profile.d"  \
