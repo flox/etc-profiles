@@ -90,7 +90,8 @@ jobs:
         fi
         echo "selfURI: $selfURI" >&2;
         echo "Installing locally defined deps" >&2;
-        flox install -e sqlite-dev "$selfURI#etc-profiles";
+        SYSTEM="$( nix eval --raw --impure --expr builtins.currentSystem; )";
+        flox install -e sqlite-dev "$selfURI#packages.$SYSTEM.etc-profiles";
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
