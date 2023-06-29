@@ -63,6 +63,7 @@ jobs:
         echo "selfURI: $selfURI" >&2;
 
         echo "Installing deps" >&2;
+        nix profile install 'nixpkgs#gdb' -L;
         nix profile install 'nixpkgs#sqlite^bin,out,dev' -L;
         nix profile install 'nixpkgs#pkg-config'         -L;
         nix profile install "$selfURI#etc-profiles"      -L;
