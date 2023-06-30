@@ -76,7 +76,7 @@ jobs:
         # when `set -eu; set -o pipefail;' is active.
         runEnv() { flox activate -e sqlite-dev -- "$@"; }
         echo "Activating env" >&2;
-        runEnv :;
+        runEnv true;
 
         echo "Checking if pkg-config can find sqlite" >&2;
         if runEnv pkg-config --list-all|grep '^sqlite3';
