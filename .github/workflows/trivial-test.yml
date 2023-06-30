@@ -45,17 +45,25 @@ jobs:
         set -eu;
         set -o pipefail;
 
+        if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+          selfURI="github:$REPO";
+        else
+          selfURI="github:$REPO/$GITHUB_REF";
+        fi
+        echo "selfURI: $selfURI" >&2;
+
         echo "Creating sqlite-dev" >&2;
         flox create -e sqlite-dev;
 
         echo "Creating flox.nix" >&2;
-        cat <<'EOF' > ./flox.nix
+        cat <<EOF > ./flox.nix
         {
           packages.nixpkgs-flox.sqlite = {
             meta.outputsToInstall = ["bin" "out" "dev"];
           };
+          packages."$selfURI".etc-profiles = {};
           shell.hook = ''
-            [[ -r "$FLOX_ENV/etc/profile" ]] && . "$FLOX_ENV/etc/profile";
+            [[ -r "\$FLOX_ENV/etc/profile" ]] && . "\$FLOX_ENV/etc/profile";
           '';
         }
         EOF
@@ -72,15 +80,6 @@ jobs:
         echo "Installing deps" >&2;
         flox install -e sqlite-dev pkg-config;
 
-        set -x;
-        SYSTEM="$(
-          flox nix eval --raw --impure --expr builtins.currentSystem;
-        )";
-        flox install -e sqlite-dev "file://$PWD#packages.$SYSTEM.etc-profiles";
-        set +x;
-
-        # Have to work around a bunch of unset variables that get us killed
-        # when `set -eu; set -o pipefail;' is active.
         runEnv() { flox activate -e sqlite-dev -- "$@"; }
         echo "Activating env" >&2;
         runEnv true;
