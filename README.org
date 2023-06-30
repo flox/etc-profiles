@@ -38,10 +38,3 @@ Recommended usage:
 - [[file:./profile.d/0500_node.sh][profile-node]] sets =NODE_PATH=.
   + Only runs if =node= is in =PATH=, so it is a sane member of a robust
     =profile.d= collection.
-
-
-* Environment Variables
-- flox uses the ~LD_AUDIT~ environment variable as the mechanism
-  for loading shared libraries from the flox environment.
-  Define ~LD_FLOXLIB_AUDIT_IMPURE=1~ to view the substitutions
-  taking place.
