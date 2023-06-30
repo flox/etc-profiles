@@ -11,8 +11,6 @@
   description =
     "Installable /etc/profile.d activation scripts for use with flox";
 
-  inputs.ld-floxlib.url = "github:flox/ld-floxlib";
-
 
 # ---------------------------------------------------------------------------- #
 
