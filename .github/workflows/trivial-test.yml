@@ -76,8 +76,7 @@ jobs:
         SYSTEM="$(
           flox nix eval --raw --impure --expr builtins.currentSystem;
         )";
-        flox build "file://$PWD#packages.$SYSTEM.etc-profiles";
-        readlink -f result*|xargs flox install -e sqlite-dev;
+        flox install -e sqlite-dev "file://$PWD#packages.$SYSTEM.etc-profiles";
         set +x;
 
         # Have to work around a bunch of unset variables that get us killed
