@@ -76,7 +76,7 @@ jobs:
         SYSTEM="$(
           flox nix eval --raw --impure --expr builtins.currentSystem;
         )";
-        flox build ".#packages.$SYSTEM.etc-profiles";
+        flox build "$PWD#packages.$SYSTEM.etc-profiles";
         readlink -f result*|xargs flox install -e sqlite-dev;
         set +x;
 
