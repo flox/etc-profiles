@@ -74,7 +74,12 @@ jobs:
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
-        runEnv() { flox activate -e sqlite-dev -- "$@"; }
+        runEnv() {
+          (
+            eval "$( flox activate -e sqlite-dev; )";
+            eval "$@";
+          );
+        }
         echo "Activating env" >&2;
         runEnv true;
 
