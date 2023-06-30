@@ -6,11 +6,15 @@ on:
     paths:
       - '**'
       - '!**/README*'
+      - '!./.github/workflows/*'
+      - './.github/workflows/trivial-test.yml'
   push:
     branches: [main]
     paths:
       - '**'
       - '!**/README*'
+      - '!./.github/workflows/*'
+      - './.github/workflows/trivial-test.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -68,17 +72,14 @@ jobs:
         echo "Installing deps" >&2;
         flox install -e sqlite-dev pkg-config;
 
-        flox build ".#etc-profiles" --no-link --print-out-paths  \
-          |xargs flox install -e sqlite-dev;
+        set -x;
+        flox build ".#etc-profiles";
+        readlink -f result*|xargs flox install -e sqlite-dev;
+        set +x;
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
-        runEnv() {
-          (
-            eval "$( flox activate -e sqlite-dev; )";
-            eval "$@";
-          );
-        }
+        runEnv() { flox activate -e sqlite-dev -- "$@"; }
         echo "Activating env" >&2;
         runEnv true;
 
