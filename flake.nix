@@ -11,12 +11,12 @@
   description =
     "Installable /etc/profile.d activation scripts for use with flox";
 
-  inputs.ld-floxlib.url = "github:flox/ld-floxlib/aameen.skip-version";
+  inputs.ld-floxlib.url = "github:flox/ld-floxlib";
 
 
 # ---------------------------------------------------------------------------- #
 
-  outputs = { self, nixpkgs, ld-floxlib, ... }: let
+  outputs = { self, nixpkgs, ... }: let
 
 # ---------------------------------------------------------------------------- #
 
@@ -32,17 +32,13 @@
 
 # ---------------------------------------------------------------------------- #
 
-    overlays.deps = final: prev: {
-      ldFloxlib =
-        ( builtins.getAttr final.system ld-floxlib.packages ).ld-floxlib;
-    };
     overlays.etc-profiles = final: prev: {
       etc-profiles = final.callPackage ./pkgs/etc-profiles {
-        src = builtins.path { path = ./.; };
+        src       = builtins.path { path = ./.; };
+        ldFloxlib = null;  # FIXME
       };
     };
-    overlays.default =
-      nixpkgs.lib.composeExtensions overlays.deps overlays.etc-profiles;
+    overlays.default = overlays.etc-profiles;
 
 
 # ---------------------------------------------------------------------------- #
@@ -73,7 +69,7 @@
             );
           };
           type          = "catalogRender";
-          version       = 1;
+          version       = 2;
           eval          = pkg.meta;
           source.locked = builtins.intersectAttrs {
             lastModified = true;

@@ -250,16 +250,15 @@
         "flox-floxpkgs": "flox-floxpkgs"
       },
       "locked": {
-        "lastModified": 1688147879,
-        "narHash": "sha256-zJYnXjDndM4zN30Jd9KG2VdB9iKSjRRA0xvO32Z3T1o=",
+        "lastModified": 1687975941,
+        "narHash": "sha256-QzuoRXzPy5G8ePnhKQpxK7e/6Qs6YVnCZlq1oilap4g=",
         "owner": "flox",
         "repo": "ld-floxlib",
-        "rev": "7cba11e96415228a513e053c608e9506ea3c3dcb",
+        "rev": "b868e931d035c93a9a325a65bc312f15441d9d15",
         "type": "github"
       },
       "original": {
         "owner": "flox",
-        "ref": "aameen.skip-version",
         "repo": "ld-floxlib",
         "type": "github"
       }
