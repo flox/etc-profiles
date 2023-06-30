@@ -54,17 +54,12 @@
       inherit (pkgsFor) etc-profiles;
     } );
 
-
-# ---------------------------------------------------------------------------- #
-
-  in {
-    inherit overlays legacyPackages;
     packages = eachDefaultSystemMap ( system: {
       inherit (builtins.getAttr system legacyPackages) etc-profiles;
       default = ( builtins.getAttr system legacyPackages ).etc-profiles;
     } );
 
-    catalog = eachDefaultSystemMap ( system: let
+    mkCatalog = eval: eachDefaultSystemMap ( system: let
       pkg = ( builtins.getAttr system packages ).etc-profiles;
       withMeta = pkg // {
         meta.publishData = {
@@ -87,9 +82,19 @@
         };
       };
     in {
-      stable.etc-profiles."0_1_0"  = withMeta;
-      stable.etc-profiles."latest" = withMeta;
+      stable.etc-profiles."0_1_0"  = if eval then pkg else withMeta;
+      stable.etc-profiles."latest" = if eval then pkg else withMeta;
     } );
+
+
+# ---------------------------------------------------------------------------- #
+
+  in {
+
+    inherit overlays legacyPackages packages;
+    catalog     = mkCatalog false;
+    evalCatalog = mkCatalog true;
+
   };
 
 
