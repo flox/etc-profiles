@@ -28,15 +28,9 @@ export             \
   XDG_DATA_DIRS    \
 ;
 
-if [ -z "${FLOX_NOSET_LD_AUDIT:-}" ]; then
-  if [ -e "$FLOX_ENV/lib/ld-floxlib.so" ]; then
-    LD_AUDIT="$FLOX_ENV/lib/ld-floxlib.so";
-    export LD_AUDIT;
-  else  # Assume Darwin
-    : "${DYLD_FALLBACK_LIBRARY_PATH:=/usr/local/lib:/usr/lib}";
-    DYLD_FALLBACK_LIBRARY_PATH="$FLOX_ENV/lib:$DYLD_FALLBACK_LIBRARY_PATH";
-    export DYLD_FALLBACK_LIBRARY_PATH;
-  fi
+if [ -z "${FLOX_NOSET_LD_LIBRARY_PATH:-}" ]; then
+  LD_LIBRARY_PATH="$FLOX_ENV/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}";
+  export LD_LIBRARY_PATH;
 fi
 
 

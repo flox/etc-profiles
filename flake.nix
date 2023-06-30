@@ -16,7 +16,7 @@
 
 # ---------------------------------------------------------------------------- #
 
-  outputs = { nixpkgs, ld-floxlib, ... }: let
+  outputs = { self, nixpkgs, ld-floxlib, ... }: let
 
 # ---------------------------------------------------------------------------- #
 
@@ -62,6 +62,33 @@
     packages = eachDefaultSystemMap ( system: {
       inherit (builtins.getAttr system legacyPackages) etc-profiles;
       default = ( builtins.getAttr system legacyPackages ).etc-profiles;
+    } );
+
+    catalog = eachDefaultSystemMap ( system: let
+      pkg = ( builtins.getAttr system legacyPackages ).etc-profiles;
+      withMeta = pkg // {
+        meta.publishData = {
+          cache   = [];
+          element = {
+            attrPath    = ["packages" system "etc-profiles"];
+            originalUrl = "github:flox/etc-profiles" + (
+                if self.sourceInfo ? rev then "/" + self.sourceInfo.rev else
+                if self.sourceInfo ? ref then "/" + self.sourceInfo.ref else ""
+            );
+            storePaths  = map ( o: o.outPath ) pkg.all;
+          };
+          type          = "catalogRender";
+          version       = 1;
+          eval          = pkg.meta;
+          source.locked = builtins.intersectAttrs {
+            lastModified = true;
+            revCount     = true;
+          } self.sourceInfo;
+        };
+      };
+    in {
+      stable.etc-profiles."0_1_0"  = withMeta;
+      stable.etc-profiles."latest" = withMeta;
     } );
   };
 

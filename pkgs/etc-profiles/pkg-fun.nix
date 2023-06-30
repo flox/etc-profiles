@@ -27,7 +27,11 @@
     profile   = builtins.path { path = ( toString src ) + "/profile";   };
     profile_d = builtins.path { path = ( toString src ) + "/profile.d"; };
     PATH      = coreutils.outPath + "/bin";
-    body      = ''
+    # ${if ! hostPlatform.isLinux then "" else ''
+    #     ln -s -- "$ldFloxlib/lib/"* "$out/lib/";
+    #   ''
+    #  }
+    args = ["-eu" "-o" "pipefail" "-c" ''
       mkdir -p "$out/etc"                     \
                "$out/lib"                     \
                "$common_paths/etc/profile.d"  \
@@ -35,18 +39,10 @@
                "$python3/etc/profile.d"       \
       ;
       cp -- "$profile" "$out/etc/profile";
-
-      ${if ! hostPlatform.isLinux then "" else ''
-          ln -s -- "$ldFloxlib/lib/"* "$out/lib/";
-        ''
-       }
-
       cp -- "$profile_d/0100_common-paths.sh" "$common_paths/etc/profile.d/";
       cp -- "$profile_d/0500_node.sh"         "$node/etc/profile.d/";
       cp -- "$profile_d/0500_python3.sh"      "$python3/etc/profile.d/";
-    '';
-    passAsFile = "body";
-    args       = ["-eu" "-o" "pipefail" "-c" ". $bodyPath;"];
+    ''];
   };
 
 
