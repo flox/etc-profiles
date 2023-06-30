@@ -44,6 +44,7 @@ jobs:
       env:
         REPO: ${{ github.repository }}
       run: |
+        exit 1
         set -eu;
         set -o pipefail;
 
