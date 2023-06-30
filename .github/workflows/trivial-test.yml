@@ -68,7 +68,7 @@ jobs:
         echo "Installing deps" >&2;
         flox install -e sqlite-dev pkg-config;
 
-        flox --debug install -e sqlite-dev "$PWD#etc-profiles";
+        flox --debug --show-trace install -e sqlite-dev "$PWD#etc-profiles";
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
