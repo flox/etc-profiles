@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------- #
 
 # Only run if `python3' is in `PATH'
-if command -v python3 >/dev/null; then
+if python3 --version >/dev/null 2>/dev/null; then
   # Get the major/minor version from `python3' to determine the correct path.
   _env_pypath="$FLOX_ENV/lib/python$(
     python3 -c 'import sys
