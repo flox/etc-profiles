@@ -14,7 +14,7 @@
 
 # ---------------------------------------------------------------------------- #
 
-  outputs = { self, nixpkgs, ... }: let
+  outputs = { self, nixpkgs, ... } @ inputs: let
 
 # ---------------------------------------------------------------------------- #
 
@@ -32,8 +32,10 @@
 
     overlays.etc-profiles = final: prev: {
       etc-profiles = final.callPackage ./pkgs/etc-profiles {
-        src       = builtins.path { path = ./.; };
+        src = if self.sourceInfo ? rev then self else
+              builtins.path { path = ./.; };
         ldFloxlib = null;  # FIXME
+        inherit inputs;
       };
     };
     overlays.default = overlays.etc-profiles;
