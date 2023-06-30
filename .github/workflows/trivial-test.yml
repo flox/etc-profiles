@@ -69,7 +69,7 @@ jobs:
         flox install -e sqlite-dev pkg-config;
 
         flox build ".#etc-profiles" --no-link --print-out-paths  \
-          |xargs flox profile install -e sqlite-dev;
+          |xargs flox install -e sqlite-dev;
 
         # Have to work around a bunch of unset variables that get us killed
         # when `set -eu; set -o pipefail;' is active.
