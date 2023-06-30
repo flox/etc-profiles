@@ -65,17 +65,17 @@
     } );
 
     catalog = eachDefaultSystemMap ( system: let
-      pkg = ( builtins.getAttr system legacyPackages ).etc-profiles;
+      pkg = ( builtins.getAttr system packages ).etc-profiles;
       withMeta = pkg // {
         meta.publishData = {
           cache   = [];
           element = {
             attrPath    = ["packages" system "etc-profiles"];
+            storePaths  = map ( o: o.outPath ) pkg.all;
             originalUrl = "github:flox/etc-profiles" + (
                 if self.sourceInfo ? rev then "/" + self.sourceInfo.rev else
                 if self.sourceInfo ? ref then "/" + self.sourceInfo.ref else ""
             );
-            storePaths  = map ( o: o.outPath ) pkg.all;
           };
           type          = "catalogRender";
           version       = 1;
