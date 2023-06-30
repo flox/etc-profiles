@@ -54,28 +54,23 @@
       inherit (pkgsFor) etc-profiles;
     } );
 
-
-# ---------------------------------------------------------------------------- #
-
-  in {
-    inherit overlays legacyPackages;
     packages = eachDefaultSystemMap ( system: {
       inherit (builtins.getAttr system legacyPackages) etc-profiles;
       default = ( builtins.getAttr system legacyPackages ).etc-profiles;
     } );
 
-    catalog = eachDefaultSystemMap ( system: let
-      pkg = ( builtins.getAttr system legacyPackages ).etc-profiles;
+    mkCatalog = eval: eachDefaultSystemMap ( system: let
+      pkg = ( builtins.getAttr system packages ).etc-profiles;
       withMeta = pkg // {
         meta.publishData = {
           cache   = [];
           element = {
             attrPath    = ["packages" system "etc-profiles"];
+            storePaths  = map ( o: o.outPath ) pkg.all;
             originalUrl = "github:flox/etc-profiles" + (
                 if self.sourceInfo ? rev then "/" + self.sourceInfo.rev else
                 if self.sourceInfo ? ref then "/" + self.sourceInfo.ref else ""
             );
-            storePaths  = map ( o: o.outPath ) pkg.all;
           };
           type          = "catalogRender";
           version       = 1;
@@ -87,9 +82,19 @@
         };
       };
     in {
-      stable.etc-profiles."0_1_0"  = withMeta;
-      stable.etc-profiles."latest" = withMeta;
+      stable.etc-profiles."0_1_0"  = if eval then pkg else withMeta;
+      stable.etc-profiles."latest" = if eval then pkg else withMeta;
     } );
+
+
+# ---------------------------------------------------------------------------- #
+
+  in {
+
+    inherit overlays legacyPackages packages;
+    catalog     = mkCatalog false;
+    evalCatalog = mkCatalog true;
+
   };
 
 
