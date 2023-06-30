@@ -73,7 +73,10 @@ jobs:
         flox install -e sqlite-dev pkg-config;
 
         set -x;
-        flox build '.#packages.etc-profiles';
+        SYSTEM="$(
+          flox nix eval --raw --impure --expr builtins.currentSystem;
+        )";
+        flox build ".#packages.$SYSTEM.etc-profiles";
         readlink -f result*|xargs flox install -e sqlite-dev;
         set +x;
 
