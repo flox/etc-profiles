@@ -38,11 +38,11 @@
     };
     overlays.etc-profiles = final: prev: {
       etc-profiles = final.callPackage ./pkgs/etc-profiles {
-        self = builtins.path { path = ./.; };
+        src = builtins.path { path = ./.; };
       };
     };
     overlays.default =
-      nixpkgs.lib.composeExtension overlays.deps overlays.etc-profiles;
+      nixpkgs.lib.composeExtensions overlays.deps overlays.etc-profiles;
 
 
 # ---------------------------------------------------------------------------- #
@@ -51,7 +51,7 @@
       nixpkgsFor = builtins.getAttr system nixpkgs.legacyPackages;
       pkgsFor    = nixpkgsFor.extend overlays.default;
     in {
-      inherit (pkgsFor) etcProfiles mkEtcProfile;
+      inherit (pkgsFor) etc-profiles;
     } );
 
 
@@ -59,12 +59,10 @@
 
   in {
     inherit overlays legacyPackages;
-    packages = eachDefaultSystemMap ( system: let
-      profiles = ( builtins.getAttr system legacyPackages ).etcProfiles;
-      rename   = name: value: { name = "profile-" + name; inherit value; };
-    in builtins.listToAttrs ( builtins.attrValues (
-      builtins.mapAttrs rename profiles
-    ) ) );
+    packages = eachDefaultSystemMap ( system: {
+      inherit (builtins.getAttr system legacyPackages) etc-profiles;
+      default = ( builtins.getAttr system legacyPackages ).etc-profiles;
+    } );
   };
 
 

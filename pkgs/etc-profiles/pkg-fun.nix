@@ -24,8 +24,8 @@
     name      = pname + "-" + version;
     builder   = bash.outPath + "/bin/bash";
     outputs   = ["common_paths" "node" "python3" "out"];
-    profile   = builtins.path { path = ( toString self ) + "/profile";   };
-    profile_d = builtins.path { path = ( toString self ) + "/profile.d"; };
+    profile   = builtins.path { path = ( toString src ) + "/profile";   };
+    profile_d = builtins.path { path = ( toString src ) + "/profile.d"; };
     PATH      = coreutils.outPath + "/bin";
     body      = ''
       mkdir -p "$out/etc"                     \

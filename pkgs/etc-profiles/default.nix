@@ -5,8 +5,7 @@
 #
 # ---------------------------------------------------------------------------- #
 
-{ self       ? inputs.self
-, src        ? { inherit (self) outPath; }
+{ src
 , inputs     ? null
 , ld-floxlib ? inputs.ld-floxlib
 , lib
