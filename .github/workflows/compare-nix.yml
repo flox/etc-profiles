@@ -20,7 +20,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  tests:
+  tests-nix:
     runs-on: ubuntu-latest
     steps:
     - name: Install Nix
