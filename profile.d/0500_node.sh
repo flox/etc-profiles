@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------- #
 
 # Only run if `node' is in `PATH'
-if command -v node >/dev/null; then
+if node --version >/dev/null 2>/dev/null; then
   NODE_PATH="$FLOX_ENV/lib/node_modules${NODE_PATH:+:$NODE_PATH}";
   export NODE_PATH;
 fi
