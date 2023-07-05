@@ -6,15 +6,11 @@ on:
     paths:
       - '**'
       - '!**/README*'
-      - '!.github/workflows/*'
-      - '.github/workflows/compare-nix.yml'
   push:
     branches: [main]
     paths:
       - '**'
       - '!**/README*'
-      - '!.github/workflows/*'
-      - '.github/workflows/compare-nix.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
