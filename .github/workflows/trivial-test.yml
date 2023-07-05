@@ -54,14 +54,14 @@ jobs:
         fi
         echo "selfURI: $selfURI" >&2;
 
-        echo "Creating sqlite-dev" >&2;
-        flox create -e sqlite-dev;
+        echo "Creating krb5-dev" >&2;
+        flox create -e krb5-dev;
 
         echo "Creating flox.nix" >&2;
         cat <<EOF > ./flox.nix
         {
-          packages.nixpkgs-flox.sqlite = {
-            meta.outputsToInstall = ["bin" "out" "dev"];
+          packages.nixpkgs-flox.krb5 = {
+            meta.outputsToInstall = ["out" "dev"];
           };
           packages."$selfURI".etc-profiles = {};
           shell.hook = ''
@@ -76,18 +76,18 @@ jobs:
         echo "---" >&2;
 
         echo "Inject flox.nix" >&2;
-        EDITOR="$PWD/bin/flox-inject" flox edit -e sqlite-dev;
+        EDITOR="$PWD/bin/flox-inject" flox edit -e krb5-dev;
         rm -f ./flox.nix;
 
         echo "Installing deps" >&2;
-        flox install -e sqlite-dev pkg-config;
+        flox install -e krb5-dev pkg-config;
 
-        runEnv() { flox activate -e sqlite-dev -- "$@"; }
+        runEnv() { flox activate -e krb5-dev -- "$@"; }
         echo "Activating env" >&2;
         runEnv true;
 
-        echo "Checking if pkg-config can find sqlite" >&2;
-        if runEnv pkg-config --list-all|grep '^sqlite3';
+        echo "Checking if pkg-config can find KRB5" >&2;
+        if runEnv pkg-config --list-all|grep -i 'krb5';
         then
           echo "PASS" >&2;
           exit 0;
