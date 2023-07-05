@@ -7,7 +7,7 @@
 
 { src
 , lib
-, ld-floxlib
+, ldFloxlib
 , config
 , bash
 , coreutils
@@ -18,8 +18,7 @@
 # ---------------------------------------------------------------------------- #
 
   pname     = "etc-profiles";
-  version   = "1.0.0";
-  ldFloxlib = ld-floxlib; # XXX comment this avoids unnecessary copy of pkg
+  version   = "0.1.0";
   drv       = derivation {
     inherit pname version system ldFloxlib;
     name      = pname + "-" + version;
@@ -28,6 +27,10 @@
     profile   = builtins.path { path = ( toString src ) + "/profile";   };
     profile_d = builtins.path { path = ( toString src ) + "/profile.d"; };
     PATH      = coreutils.outPath + "/bin";
+    # ${if ! hostPlatform.isLinux then "" else ''
+    #     ln -s -- "$ldFloxlib/lib/"* "$out/lib/";
+    #   ''
+    #  }
     args = ["-eu" "-o" "pipefail" "-c" ''
       mkdir -p "$out/etc"                     \
                "$out/lib"                     \
@@ -39,10 +42,6 @@
       cp -- "$profile_d/0100_common-paths.sh" "$common_paths/etc/profile.d/";
       cp -- "$profile_d/0500_node.sh"         "$node/etc/profile.d/";
       cp -- "$profile_d/0500_python3.sh"      "$python3/etc/profile.d/";
-      ${if ! hostPlatform.isLinux then "" else ''
-          ln -s -- "$ldFloxlib/lib/"* "$out/lib/";
-        ''
-      }
     ''];
   };
 
