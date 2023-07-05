@@ -50,7 +50,7 @@ jobs:
         set -o pipefail;
         nix registry pin nixpkgs github:NixOS/nixpkgs/23.05;
 
-    - name: SQLite3 pkg-config Test
+    - name: KRB5 pkg-config Test
       shell: bash
       env:
         REPO: ${{ github.repository }}
