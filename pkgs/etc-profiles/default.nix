@@ -14,8 +14,8 @@
 , system
 }: import ./pkg-fun.nix {
   inherit lib config bash coreutils hostPlatform system;
+  inherit (inputs.ld-floxlib.packages) ld-floxlib;
   src = inputs.self;
-  ld-floxlib = inputs.ld-floxlib.packages.ld-floxlib;
 }
 
 
