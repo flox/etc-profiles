@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------------------- #
 
   pname     = "etc-profiles";
-  version   = "0.1.0";
+  version   = "1.0.0";
   ldFloxlib = ld-floxlib; # XXX comment this avoids unnecessary copy of pkg
   drv       = derivation {
     inherit pname version system ldFloxlib;
