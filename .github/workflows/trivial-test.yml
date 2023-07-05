@@ -56,6 +56,7 @@ jobs:
         echo "Creating flox.nix" >&2;
         cat <<EOF > ./flox.nix
         {
+          packages.nixpkgs-flox.nodejs = {};
           packages.nixpkgs-flox.krb5 = {
             meta.outputsToInstall = ["out" "dev"];
           };
@@ -93,5 +94,21 @@ jobs:
           echo "---" >&2;
           runEnv pkg-config --list-all >&2;
           echo "---" >&2;
+          exit 1;
+        fi
+
+    - name: Node.js KRB5 Test
+      shell: bash
+      run: |
+        runEnv() { flox activate -e krb5-dev -- "$@"; }
+        mkdir ./node-krb5;
+        cd ./node-krb5;
+        # Install `krb5' module with `npm'.
+        runEnv npm i krb5;
+        if [[ -x "$PWD/node_modules/krb5/build/Release/krb5.node" ]]; then
+          echo "PASS: npm" >&2;
+          exit 0;
+        else
+          echo "FAIL: npm" >&2;
           exit 1;
         fi
