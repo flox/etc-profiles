@@ -5,19 +5,17 @@
 #
 # ---------------------------------------------------------------------------- #
 
-{ src        ? inputs.self or ( builtins.path { path = ../..; } )
-, inputs     ? null
-, ld-floxlib ? inputs.ld-floxlib or null
+{ inputs
 , lib
 , config
 , bash
 , coreutils
 , hostPlatform
 , system
-, ldFloxlib ? if ld-floxlib == null then null else
-  ( ld-floxlib.packages.${system} or ld-floxlib.packages ).ld-floxlib
 }: import ./pkg-fun.nix {
-  inherit src lib ldFloxlib config bash coreutils hostPlatform system;
+  inherit lib config bash coreutils hostPlatform system;
+  inherit (inputs.ld-floxlib.packages) ld-floxlib;
+  src = inputs.self;
 }
 
 
