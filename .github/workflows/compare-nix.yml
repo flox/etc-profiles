@@ -66,7 +66,7 @@ jobs:
         echo "selfURI: $selfURI" >&2;
 
         echo "Installing deps" >&2;
-        nix profile install 'nixpkgs#sqlite^bin,out,dev' -L;
+        nix profile install 'nixpkgs#krb5^out,dev' -L;
         nix profile install 'nixpkgs#pkg-config'         -L;
         nix profile install "$selfURI#etc-profiles"      -L;
 
@@ -75,8 +75,8 @@ jobs:
         export LD_FLOXLIB_DEBUG=1;
         . "$FLOX_ENV/etc/profile";
 
-        echo "Checking if pkg-config can find sqlite" >&2;
-        if pkg-config --list-all|grep '^sqlite3';
+        echo "Checking if pkg-config can find KRB5" >&2;
+        if pkg-config --list-all|grep -i 'krb5';
         then
           echo "PASS" >&2;
           exit 0;
