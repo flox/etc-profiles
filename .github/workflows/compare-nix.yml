@@ -16,19 +16,20 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  tests:
+  tests-nix:
     runs-on: ubuntu-latest
     steps:
     - name: Install Nix
-      uses: cachix/install-nix-action@11f4ad19be46fd34c005a2864996d8f197fb51c6
+      uses: cachix/install-nix-action@6ed004b9ccb68dbc28e7c85bee15fa93dbd214ac
       with:
-        install_url: https://releases.nixos.org/nix/nix-2.13.3/install
-        nix_path: nixpkgs=channel:nixpkgs-22.11
+        install_url: https://releases.nixos.org/nix/nix-2.15.1/install
+        nix_path: nixpkgs=channel:nixpkgs-23.05
         extra_nix_config: |
-          experimental-features = nix-command flakes
+          experimental-features = nix-command flakes ca-derivations impure-derivations fetch-closure
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
           substituters = https://cache.nixos.org
-          trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+          trusted-substituters = https://cache.floxdev.com
+          trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= flox-store-public-0:8c/B+kjIaQ+BloCmNkRUKwaVPFWkriSAd0JJvuDu4F0=
           max-jobs = auto
           cores = 0
           substitute = true
@@ -37,40 +38,41 @@ jobs:
           connect-timeout = 5
           stalled-download-timeout = 90
           timeout = 0
+          allow-import-from-derivation = true
 
     - name: Setup Nix Registry
       run: |
         set -eu;
         set -o pipefail;
-        nix registry pin nixpkgs github:NixOS/nixpkgs/22.11;
+        nix registry pin nixpkgs github:NixOS/nixpkgs/23.05;
 
-    - name: SQLite3 pkg-config Test
+    - name: KRB5 pkg-config Test
       shell: bash
+      env:
+        REPO: ${{ github.repository }}
       run: |
         set -eu;
         set -o pipefail;
-        _ec=0;
-        trap '_ec="$?"; echo "ERROR: code $_ec" >&2; exit "$_ec";' HUP TERM INT;
 
         if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
-          selfURI="github:${{ github.repository }}";
+          selfURI="github:$REPO";
         else
-          selfURI="github:${{ github.repository }}/$GITHUB_REF";
+          selfURI="github:$REPO/$GITHUB_REF";
         fi
         echo "selfURI: $selfURI" >&2;
 
         echo "Installing deps" >&2;
-        nix profile install                 \
-          'nixpkgs#sqlite^bin,out,dev'      \
-          'nixpkgs#pkg-config'              \
-          "$selfURI#etc-profiles"           \
-        ;
+        nix profile install 'nixpkgs#krb5^out,dev' -L;
+        nix profile install 'nixpkgs#pkg-config'         -L;
+        nix profile install "$selfURI#etc-profiles"      -L;
 
+        echo "Activating env" >&2;
         export FLOX_ENV="$HOME/.nix-profile";
+        export LD_FLOXLIB_DEBUG=1;
         . "$FLOX_ENV/etc/profile";
 
-        echo "Checking if pkg-config can find sqlite" >&2;
-        if pkg-config --list-all|grep '^sqlite3';
+        echo "Checking if pkg-config can find KRB5" >&2;
+        if pkg-config --list-all|grep -i 'krb5';
         then
           echo "PASS" >&2;
           exit 0;
