@@ -53,7 +53,6 @@ jobs:
         echo "Creating krb5-dev" >&2;
         flox create -e krb5-dev;
 
-
         echo "Creating flox.nix" >&2;
         cat <<EOF > ./flox.nix
         {
