@@ -19,8 +19,10 @@ jobs:
   tests-flox:
     runs-on: ubuntu-latest
     steps:
+    # TODO: replace with `@v1'
     - name: Install flox
-      uses: flox/install-flox-action@v1.0.0
+      uses: flox/install-flox-action@da8d175dbbac15db5466b627f7307b1a70072fd7
+        flox-installable-uri: github:flox/flox#flox
 
     - name: Checkout
       uses: actions/checkout@v3
