@@ -28,9 +28,41 @@ export             \
   XDG_DATA_DIRS    \
 ;
 
-if [ -z "${FLOX_NOSET_LD_LIBRARY_PATH:-}" ]; then
+# Use `FLOX_SET_LD_LIBRARY_PATH' to a non-empty string to use `LD_LIBRARY_PATH'.
+# This is turned off by default in favor of the `LD_AUDIT' ( Linux ) and
+# `DYLD_FALLBACK_LIBRARY_PATH' ( Darwin ) which are less likely to cause
+# conflicts with executables built outside of `flox'.
+if [ -n "${FLOX_SET_LD_LIBRARY_PATH:-}" ]; then
   LD_LIBRARY_PATH="$FLOX_ENV/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}";
   export LD_LIBRARY_PATH;
+fi
+
+# By default on Linux: all executables run from an activated shell will operate
+# with an intermediary between them and the system's dynamic loader using the
+# `LD_AUDIT' interface of `ld-linux.so'.
+# This allows failed library lookups to search `FLOX_ENV' for suitable
+# libraries at runtime and build-time.
+if [ -z "${FLOX_NOSET_LD_AUDIT:-}" ] && [ -e "$FLOX_ENV/lib/ld-floxlib.so" ];
+then
+  LD_AUDIT="$FLOX_ENV/lib/ld-floxlib.so";
+  export LD_AUDIT;
+fi
+
+# By default on Darwin: we append `DYLD_FALLBACK_LIBRARY_PATH' which indicates
+# to the system loader that we would like to add "low priority" search paths.
+# This allows failed library lookups to search `FLOX_ENV' for suitable
+# libraries at runtime and build-time.
+if [ -z "${FLOX_NOSET_DYLD_FALLBACK:-}" ]; then
+  case "$( uname; )" in
+    [dD]arwin*)
+      : "${DYLD_FALLBACK_LIBRARY_PATH:=/usr/local/lib:/usr/lib}";
+      DYLD_FALLBACK_LIBRARY_PATH="$FLOX_ENV/lib:$DYLD_FALLBACK_LIBRARY_PATH";
+      export DYLD_FALLBACK_LIBRARY_PATH;
+    ;;
+    *)
+      :;
+    ;;
+  esac
 fi
 
 
